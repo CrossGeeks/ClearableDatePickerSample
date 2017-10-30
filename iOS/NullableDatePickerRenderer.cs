@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using UIKit;
 using Xamarin.Forms.Platform.iOS;
 using Xamarin.Forms;
-using UIKit;
-using System.Collections.Generic;
 using NullableDatePicker.iOS;
 
 [assembly: ExportRenderer(typeof(NullableDatePicker.Controls.NullableDatePicker), typeof(NullableDatePickerRenderer))]
@@ -22,15 +23,38 @@ namespace NullableDatePicker.iOS
 				Control.Layer.BorderColor = UIColor.LightGray.CGColor;
 				Control.Layer.BorderWidth = 1;
 
-				if (Device.Idiom == TargetIdiom.Tablet)
+                var entry = (NullableDatePicker.Controls.NullableDatePicker)this.Element;
+                if (!entry.NullableDate.HasValue)
+                {
+                    this.Control.Text = entry.PlaceHolder;
+                }
+
+                if (Device.Idiom == TargetIdiom.Tablet)
 				{
 					this.Control.Font = UIFont.SystemFontOfSize(25);
 				}
 			}
-
 		}
 
-		private void AddClearButton()
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            // Check if the property we are updating is the format property
+            if (e.PropertyName == Xamarin.Forms.DatePicker.DateProperty.PropertyName || e.PropertyName == Xamarin.Forms.DatePicker.FormatProperty.PropertyName)
+            {
+                var entry = (NullableDatePicker.Controls.NullableDatePicker)this.Element;
+
+                // If we are updating the format to the placeholder then just update the text and return
+                if (this.Element.Format == entry.PlaceHolder)
+                {
+                    this.Control.Text = entry.PlaceHolder;
+                    return;
+                }
+            }
+
+            base.OnElementPropertyChanged(sender, e);
+        }
+
+        private void AddClearButton()
 		{
 			var originalToolbar = this.Control.InputAccessoryView as UIToolbar;
 

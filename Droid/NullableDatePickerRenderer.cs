@@ -20,8 +20,10 @@ namespace NullableDatePicker.Droid
             if (Control == null || e.NewElement == null)
                 return;
 
+            var entry = (NullableDatePicker.Controls.NullableDatePicker)this.Element;
+
             this.Control.Click += OnPickerClick;
-            this.Control.Text = Element.Date.ToString(Element.Format);
+            this.Control.Text = !entry.NullableDate.HasValue ? entry.PlaceHolder : Element.Date.ToString(Element.Format);
             this.Control.KeyListener = null;
             this.Control.FocusChange += OnPickerFocusChange;
             this.Control.Enabled = Element.IsEnabled;
@@ -30,10 +32,18 @@ namespace NullableDatePicker.Droid
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            base.OnElementPropertyChanged(sender, e);
-
             if (e.PropertyName == Xamarin.Forms.DatePicker.DateProperty.PropertyName || e.PropertyName == Xamarin.Forms.DatePicker.FormatProperty.PropertyName)
-                SetDate(Element.Date);
+            {
+                var entry = (NullableDatePicker.Controls.NullableDatePicker)this.Element;
+
+                if (this.Element.Format == entry.PlaceHolder)
+                {
+                    this.Control.Text = entry.PlaceHolder;
+                    return;
+                }
+            }
+
+            base.OnElementPropertyChanged(sender, e);
         }
 
         void OnPickerFocusChange(object sender, Android.Views.View.FocusChangeEventArgs e)
@@ -93,8 +103,8 @@ namespace NullableDatePicker.Droid
 
             _dialog.SetButton("Done", (sender, e) =>
            {
-               SetDate(_dialog.DatePicker.DateTime);
                this.Element.Format = this.Element._originalFormat;
+               SetDate(_dialog.DatePicker.DateTime);
                this.Element.AssignValue();
            });
             _dialog.SetButton2("Clear", (sender, e) =>

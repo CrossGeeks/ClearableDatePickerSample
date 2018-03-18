@@ -12,11 +12,17 @@ namespace NullableDatePicker.Droid
     public class NullableDatePickerRenderer : ViewRenderer<Controls.NullableDatePicker, EditText>
     {
         DatePickerDialog _dialog;
+        
+        public NullableDatePickerRenderer(Context context) : base(context)
+        {
+
+        }
+        
         protected override void OnElementChanged(ElementChangedEventArgs<Controls.NullableDatePicker> e)
         {
             base.OnElementChanged(e);
 
-            this.SetNativeControl(new Android.Widget.EditText(Forms.Context));
+            this.SetNativeControl(new Android.Widget.EditText(Context));
             if (Control == null || e.NewElement == null)
                 return;
 

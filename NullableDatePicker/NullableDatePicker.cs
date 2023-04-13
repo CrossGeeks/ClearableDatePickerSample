@@ -43,8 +43,10 @@ namespace NullableDatePicker.Controls
 			}
 			else
 			{
-				Format = PlaceHolder;
-
+				if (!String.IsNullOrEmpty(Placeholder))
+				{
+				    Format = Placeholder;
+				}
 			}
 
 		}
